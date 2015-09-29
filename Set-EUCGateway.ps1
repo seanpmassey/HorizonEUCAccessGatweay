@@ -10,7 +10,22 @@
 .PARAMETER GetViewConfig
    Get current configuration of the appliance
 .PARAMETER SetViewConfig
-	Set View Configuration.
+	Set View Configuration. Subparameters of this parameter are:
+	EnableView - Enables Horizon View connections on the appliance
+	DisableView - Prevents the appliance from handling Horizon View connections
+	ViewProxyDestinationURL - the DNS Hostname or IP address of a Horizon View connection server or load balanced pool of Horizon View connection servers
+	ViewProxyDestinationURLThumbprints - The SSL certificate thumbprint of the Horizon View connection server or load balancer
+	ViewEnablePCoIP - Enables PCoIP traffic on appliance
+	ViewDisablePCoIP - Disables PCoIP traffic on appliance
+	ViewPCoIPExternalIP - External/Public IP address used for PCoIP connections.  Must be an IP address.
+	ViewPCoIPExternalPort - Port used for PCoIP traffic.  Defaults to 4172.  Does not need to be changed unless using a different port for PCoIP
+	ViewEnableTunnel - Enables HTTPS secure tunnel.
+	ViewDisableTunnel - Disables HTTPS secure tunnel
+	ViewtunnelexternalURL - HTTPS URL for Secure Tunnel
+	ViewEnableBlast - Enables the Blast protocol on the appliance
+	ViewDisableBlast - Disables the Blast protocol on the appliance
+	ViewblastExternalURL - External URL used by the Blast Protocol
+	ViewBlastExternalPort - External Port used by the Blast Protocol.  Defaults to 8443
 .PARAMETER GetLogBundle
 	Retrieve log bundle from Appliance
 .EXAMPLE
@@ -41,6 +56,7 @@ Param
 	[Parameter(ParameterSetName="View")][Parameter(ParameterSetName="EnableBlast")][switch]$ViewEnableBlast,
 	[Parameter(ParameterSetName="View")][Parameter(ParameterSetName="EnableBlast")][switch]$viewDisableBlast,
 	[Parameter(ParameterSetName="View")]$ViewblastExternalURL,
+	[Parameter(ParameterSetName="View")][string]$ViewBlastExternalPort = "8443",
 	#[Parameter(ParameterSetName="View")]$newProxyPattern,
 	
 	[Parameter(ParameterSetName="vIDM")][switch]$ConfigureVIDM,
@@ -160,7 +176,7 @@ If($SetViewConfig)
 	
 	If($ViewblastExternalURL)
 	{
-		$NewViewConfig.blastExternalUrl = $ViewblastExternalURL
+		$NewViewConfig.blastExternalUrl = $ViewblastExternalURL + ":" + $ViewBlastExternalPort
 	}
 	
 	$json = $NewViewConfig | ConvertTo-Json
